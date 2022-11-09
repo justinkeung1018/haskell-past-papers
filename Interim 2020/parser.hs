@@ -131,7 +131,7 @@ e1, e2, e3, e4 :: Expr
 s1
   = "1+7*9"
 e1
-  = EApp '+' (ENum 3) (EApp '*' (ENum 7) (ENum 9))
+  = EApp '+' (ENum 1) (EApp '*' (ENum 7) (ENum 9))
 
 s2
   = "4+x^2-8*y"
