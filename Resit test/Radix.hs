@@ -135,18 +135,19 @@ intersection (Node x lt rt) (Leaf y)
 intersection (Node x lt rt) (Node y lt' rt')
   = Node (x `and` y) (intersection lt lt') (intersection rt rt')
 
+-- Determines the point from which a RadixTree becomes more economical
+-- in terms of memory than an IntTree.
 economical :: Int -> Int
 economical n
   | compareTrees (n - 1) /= compareTrees n = n
   | otherwise                              = economical (n + 1)
-
-compareTrees :: Int -> Int
-compareTrees n
-  | sizeIT it > sizeRT rt = 1
-  | otherwise             = 0
   where
-    it = buildIntTree (take n rs)
-    rt = buildRadixTree (take n rs)
+    compareTrees n
+      | sizeIT it > sizeRT rt = 1
+      | otherwise             = 0
+      where
+        it = buildIntTree (take n rs)
+        rt = buildRadixTree (take n rs)
 
 -- CONCLUSION: The break-even point is n = 198.
 
