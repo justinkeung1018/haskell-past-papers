@@ -50,6 +50,9 @@ rs = randomInts 1000 500 765539
 
 --------------------------------------------------------------------------
 -- Pre (universal): all integers are non-negative
+empty :: RadixTree
+empty
+  = Leaf Zero
 
 sizeIT :: IntTree -> Int
 sizeIT Empty
@@ -102,11 +105,11 @@ insert (b : bs) (Node x lt rt)
   | b == 0    = Node x (insert bs lt) rt
   | otherwise = Node x lt (insert bs rt)
 insert bs (Leaf x)
-  = insert bs (Node x (Leaf Zero) (Leaf Zero))
+  = insert bs (Node x empty empty)
 
 buildRadixTree :: [Int] -> RadixTree
 buildRadixTree
-  = foldr (insert . binary) (Leaf Zero)
+  = foldr (insert . binary) empty
 
 member :: Int -> RadixTree -> Bool
 member n rt
