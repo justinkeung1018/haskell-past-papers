@@ -103,16 +103,16 @@ parse :: [Token] -> ExprStack -> OpStack -> Expr
 -- Pre: the list of tokens is not empty
 parse [] [e] _
   = e
-parse [] eStack oStack@(_ : os)
-  = parse [] (applyEApp eStack oStack) os
-parse tokens@(TOp op : ts) eStack oStack@(o : os)
-  | op == ')' && o == '(' = parse ts eStack os
-  | op `supersedes` o     = parse ts eStack (op : oStack)
-  | otherwise             = parse tokens (applyEApp eStack oStack) os
-parse (TNum n : ts) eStack oStack
-  = parse ts (ENum n : eStack) oStack
-parse (TVar s : ts) eStack oStack
-  = parse ts (EVar s : eStack) oStack 
+parse [] eStk oStk@(_ : os)
+  = parse [] (applyEApp eStk oStk) os
+parse tts@(TOp op : ts) eStk oStk@(o : os)
+  | op == ')' && o == '(' = parse ts eStk os
+  | op `supersedes` o     = parse ts eStk (op : oStk)
+  | otherwise             = parse tts (applyEApp eStk oStk) os
+parse (TNum n : ts) eStk oStk
+  = parse ts (ENum n : eStk) oStk
+parse (TVar s : ts) eStk oStk
+  = parse ts (EVar s : eStk) oStk 
 
 -- Pops the top two of the expression stack
 -- then applies the top of the operator stack to the two expressions.
