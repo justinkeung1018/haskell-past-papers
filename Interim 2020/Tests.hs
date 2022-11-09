@@ -36,7 +36,8 @@ tokeniseTestCases
     ]
 
 expParserTestCases
-  = [ s1 ==> EApp '+' (ENum 1) (EApp '*' (ENum 7) (ENum 9))
+  = [ s1 ==> e1,
+      s4 ==> e4
     ]
 
 allTestCases

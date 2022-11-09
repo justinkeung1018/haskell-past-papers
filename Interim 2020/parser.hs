@@ -43,22 +43,22 @@ showExpr (EApp op e e') = "(" ++ showExpr e ++ [op] ++ showExpr e' ++ ")"
 precedence :: Operator -> Precedence
 -- Pre: the operator has a binding in opTable
 precedence op
-  = p
-  where
-    Just (p, _) = lookup op opTable
+  = head [p | (o, (p, _)) <- opTable, op == o]
 
 -- Returns the second value of the tuple returned from looking up
 -- the operator in the given table
 associativity :: Operator -> Associativity
 -- Pre: the operator has a binding in opTable
 associativity op
-  = a
-  where
-    Just (_, a) = lookup op opTable
+  = head [a | (o, (_, a)) <- opTable, op == o]
 
 -- Gives the result of a having greater precedence than b, or the
 -- same precedence and a having right asssociativity
 supersedes :: Operator -> Operator -> Bool
+supersedes '(' _
+  = True
+supersedes ')' _
+  = False
 supersedes op op'
   = p > p' || (p == p' && associativity op == R)
   where
@@ -103,30 +103,39 @@ parse :: [Token] -> ExprStack -> OpStack -> Expr
 -- Pre: the list of tokens is not empty
 parse [] [e] _
   = e
-parse [] (e : e' : es) (o : os)
-  = parse [] eStack' os
-  where
-    eStack' = EApp o e' e : es
+parse [] eStack oStack@(_ : os)
+  = parse [] (applyEApp eStack oStack) os
 parse tokens@(TOp op : ts) eStack oStack@(o : os)
-  | op `supersedes` o = parse ts eStack (op : oStack)
-  | otherwise         = parse tokens eStack' os
-  where
-    (e : e' : es) = eStack
-    eStack' = EApp o e' e : es
+  | op == ')' && o == '(' = parse ts eStack os
+  | op `supersedes` o     = parse ts eStack (op : oStack)
+  | otherwise             = parse tokens (applyEApp eStack oStack) os
 parse (TNum n : ts) eStack oStack
   = parse ts (ENum n : eStack) oStack
 parse (TVar s : ts) eStack oStack
   = parse ts (EVar s : eStack) oStack 
 
-applyEApp :: ExprStack -> OpStack -> Expr
-applyEApp 
-  = undefined
+-- Pops the top two of the expression stack
+-- then applies the top of the operator stack to the two expressions.
+-- Returns the expression stack after pushing the result expression
+-- onto the expression stack.
+applyEApp :: ExprStack -> OpStack -> ExprStack
+applyEApp (e : e' : es) (o : _)
+  = EApp o e' e : es
 
 -----------------------------------------------------------------------------
 -- Some test cases...
 
-s1, s2 :: String
+s1, s2, s4 :: String
+
+e1, e4 :: Expr
 
 s1 = "1+7*9"
 
 s2 = "4+x^2-8*y"
+
+s4 = "(4+x)^(2-8)*y"
+
+e1 = EApp '+' (ENum 1) (EApp '*' (ENum 7) (ENum 9))
+
+e4 = EApp '*' (EApp '^' (EApp '+' (ENum 4) (EVar "x")) 
+     (EApp '-' (ENum 2) (ENum 8))) (EVar "y")
