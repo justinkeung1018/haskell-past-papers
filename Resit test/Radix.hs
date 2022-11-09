@@ -71,20 +71,16 @@ sizeRT (Node x lt rt)
 -- a name clash
 --
 and :: Bit -> Bit -> Bit
-and _ Zero
-  = Zero
 and Zero _
   = Zero
-and _ _
-  = One
+and One b
+  = b
 
 or :: Bit -> Bit -> Bit
 or One _
   = One
-or _ One
-  = One
-or _ _
-  = Zero
+or Zero b
+  = b
 
 binary :: Int -> BitString
 binary 0
