@@ -114,24 +114,7 @@ buildRadixTree
 
 member :: Int -> RadixTree -> Bool
 member n rt
-  = member' bs rt
-  where
-    bs = binary n
-    
-    member' [] (Leaf x)
-      = bitToBool x
-    member' [] (Node x _ _)
-      = bitToBool x
-    member' (b : bs) (Node _ lt rt)
-      | b == 0    = member' bs lt
-      | otherwise = member' bs rt
-    member' _ (Leaf _)
-      = False
-    
-    bitToBool Zero 
-      = False
-    bitToBool One 
-      = True
+  = rt == insert (binary n) rt
 
 union :: RadixTree -> RadixTree -> RadixTree
 union (Leaf x) (Leaf y)
