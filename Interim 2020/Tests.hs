@@ -37,6 +37,8 @@ tokeniseTestCases
 
 expParserTestCases
   = [ s1 ==> e1,
+      s2 ==> e2,
+      s3 ==> e3,
       s4 ==> e4
     ]
 
