@@ -135,63 +135,51 @@ buildLTS :: [ProcessDef] -> LTS
 -- Pre: All process references (Ref constructor) have a corresponding
 --      definition in the list of ProcessDefs.
 buildLTS defs
-  = processDefsToLTS defs 0 [] 
+  = nub (processDefsToLTS defs 0 (length defs) refs)
+  where
+    refs = zipWith (\(id, _) n -> (id, n)) defs [0..]
 
 -- The three arguments are
 -- 1. The process definitions
 -- 2. The next available state number
--- 3. A mapping of process to their assigned state number
-processDefsToLTS :: [ProcessDef] -> State -> [(Process, State)] -> LTS
-processDefsToLTS [] _ _
+-- 3. A mapping of references to their assigned state numbers
+processDefsToLTS :: [ProcessDef] -> State -> State -> [(String, State)] -> LTS
+processDefsToLTS [] _ _ _
   = []
-processDefsToLTS ((id, p) : defs) n refs
-  = lts ++ processDefsToLTS defs n' refs'
+processDefsToLTS ((id, p) : defs) curr next refs
+  = lts ++ processDefsToLTS defs curr' next' refs
   where
-    (lts, n', refs')
-      | isNothing state = processToLTS p n ((Ref id, n) : refs)
-      | otherwise       = processToLTS p n refs
-    state = lookup (Ref id) refs
+    (lts, curr', next') = processToLTS p curr next refs
 
--- The three arguments are
+-- The four arguments are
 -- 1. The process
--- 2. The next available state number
--- 3. A mapping of processes to their assigned state numbers
+-- 2. The current state
+-- 3. The next available state
+-- 4. A mapping of references to their assigned state numbers
 --
 -- The return value is a triple consisting of
 -- 1. A list of transitions starting from the state of the process
--- 2. The next available state number, after listing all the transitions from
---    the given process
--- 3. A mapping of processes to their assigned state numbers
-processToLTS :: Process -> State -> [(Process, State)] 
-                -> ([Transition], State, [(Process, State)])
-processToLTS STOP n refs
-  = ([], n, refs)
-processToLTS p@(Ref id) n refs
-  | isNothing state = ([((n, n + 1), id)], n + 1, (p, n) : refs)
-  | otherwise       = ([((n, fromJust state), id)], n, refs)
+-- 2. The state at the end of the process (?)
+-- 3. The next available state number after the process
+processToLTS :: Process -> State -> State -> [(String, State)] 
+                -> ([Transition], State, State)
+processToLTS STOP curr next _
+  = ([], curr, next)
+processToLTS (Ref id) curr next refs
+  = ([], state, curr)
+  where 
+    state = lookUp id refs
+processToLTS (Prefix id p) curr next refs
+  = (((curr, curr'), id) : ts, curr, next')
   where
-    state = lookup p refs
-processToLTS p@(Prefix id p') n refs
-  | isNothing state = (((n, n + 1), id) : ts, n', refs')
-  | otherwise       = (((n, fromJust state), id) : ts, n', refs')
+    (ts, curr', next') = processToLTS p next (next + 1) refs
+processToLTS (Choice []) curr next _
+  = ([], curr, next)
+processToLTS (Choice (p : ps)) curr next refs
+  = (ts ++ ts', curr'', next'')
   where
-    (ts, n', refs')
-      | isNothing state = processToLTS p' (n + 1) ((p, n) : refs)
-      | otherwise       = processToLTS p' n refs
-    state = lookup p refs
-processToLTS (Choice ps) n refs
-  = choicesToLTS ps n refs
-  where
-    choicesToLTS [] n refs
-      = ([], n, refs)
-    choicesToLTS (p@(Prefix id p') : ps) n refs 
-      = (ts ++ ts', n'', refs'')
-      where
-        (ts', n'', refs'') = choicesToLTS ps n' refs'
-        (ts, n', refs')
-          | isNothing state = processToLTS p' (n + 1) ((p, n) : refs)
-          | otherwise       = processToLTS p' n refs
-        state = lookup p refs
+    (ts, curr', next') = processToLTS p curr next refs
+    (ts', curr'', next'') = processToLTS (Choice ps) curr' next' refs
     
 ------------------------------------------------------
 -- Sample process definitions...
