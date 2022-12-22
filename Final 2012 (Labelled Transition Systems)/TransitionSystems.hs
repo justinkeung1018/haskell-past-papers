@@ -130,13 +130,18 @@ compose lts1 lts2
 -- NOT WORKING
 -- 
 
+-- I think I'm supposed to compose the LTSs together
 buildLTS :: [ProcessDef] -> LTS
 -- Pre: All process references (Ref constructor) have a corresponding
 --      definition in the list of ProcessDefs.
 buildLTS defs
-  = processDefsToLTS defs 0 []
-  
-processDefsToLTS :: [(Id, Process)] -> State -> [(Process, State)] -> [Transition]
+  = processDefsToLTS defs 0 [] 
+
+-- The three arguments are
+-- 1. The process definitions
+-- 2. The next available state number
+-- 3. A mapping of process to their assigned state number
+processDefsToLTS :: [ProcessDef] -> State -> [(Process, State)] -> LTS
 processDefsToLTS [] _ _
   = []
 processDefsToLTS ((id, p) : defs) n refs
@@ -147,7 +152,18 @@ processDefsToLTS ((id, p) : defs) n refs
       | otherwise       = processToLTS p n refs
     state = lookup (Ref id) refs
 
-processToLTS :: Process -> State -> [(Process, State)] -> ([Transition], State, [(Process, State)])
+-- The three arguments are
+-- 1. The process
+-- 2. The next available state number
+-- 3. A mapping of processes to their assigned state numbers
+--
+-- The return value is a triple consisting of
+-- 1. A list of transitions starting from the state of the process
+-- 2. The next available state number, after listing all the transitions from
+--    the given process
+-- 3. A mapping of processes to their assigned state numbers
+processToLTS :: Process -> State -> [(Process, State)] 
+                -> ([Transition], State, [(Process, State)])
 processToLTS STOP n refs
   = ([], n, refs)
 processToLTS p@(Ref id) n refs
