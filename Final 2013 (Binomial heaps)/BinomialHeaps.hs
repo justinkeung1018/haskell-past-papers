@@ -85,24 +85,18 @@ toBinary h
 
 binarySum :: [Int] -> [Int] -> [Int]
 binarySum x y
-  = dropWhile (== 0) (reverse (binarySum' x' y' 0))
+  = dropWhile (== 0) (init (map fst (scanr sumDigit (0, 0) (zip x' y'))))
   where
-    binarySum' [] [] cOut
-      = [cOut]
-    binarySum' (x : xs) (y : ys) cIn
-      = sum : binarySum' xs ys cOut
+    x' = pad x
+    y' = pad y
+    pad n
+      = replicate (numDigits - length n + 1) 0 ++ n -- Extra 0 for overflow
       where
-        (sum, cOut) = sumDigit x y cIn
-        sumDigit b1 b2 cIn
-          = (sum, cOut)
-          where
-            (cOut, sum) = quotRem (b1 + b2 + cIn) 2
-    numDigits = max (length x) (length y)
-    padAndReverse n
-      = reverse (replicate (numDigits - length n + 1) 0 ++ n) -- Extra 0 for overflow
-    x' = padAndReverse x
-    y' = padAndReverse y
-    
+        numDigits = max (length x) (length y)
+    sumDigit (b1, b2) (_, cIn)
+      = (sum, cOut)
+      where
+        (cOut, sum) = quotRem (b1 + b2 + cIn) 2
 
 ------------------------------------------------------
 -- Some sample trees...
