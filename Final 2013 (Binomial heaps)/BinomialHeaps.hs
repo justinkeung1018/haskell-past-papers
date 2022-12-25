@@ -34,14 +34,17 @@ extractMin
   = minimum . map key
 
 mergeHeaps :: Ord a => BinHeap a -> BinHeap a -> BinHeap a
-mergeHeaps [] h'
-  = h'
 mergeHeaps h []
   = h
-mergeHeaps tts@(t : ts) tts'@(t' : ts')
-  | rank t < rank t' = t : mergeHeaps ts tts'
-  | rank t' < rank t = t' : mergeHeaps tts ts'
-  | otherwise        = mergeHeaps [combineTrees t t'] (mergeHeaps ts ts')
+mergeHeaps [] h'
+  = h'
+mergeHeaps h@(t : ts) h'@(t' : ts')
+  | r < r'    = t : mergeHeaps ts h'
+  | r' < r    = t' : mergeHeaps h ts'
+  | otherwise = mergeHeaps [combineTrees t t'] (mergeHeaps ts ts')
+  where
+    r  = rank t
+    r' = rank t'
 
 insert :: Ord a => a -> BinHeap a -> BinHeap a
 insert v
@@ -84,6 +87,10 @@ toBinary h
     ranks = map rank h
 
 binarySum :: [Int] -> [Int] -> [Int]
+binarySum x []
+  = x
+binarySum [] y
+  = y
 binarySum [0] [0]
   = [0]
 binarySum x y
