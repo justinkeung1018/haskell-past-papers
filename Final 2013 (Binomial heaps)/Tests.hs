@@ -27,7 +27,23 @@ deleteMinTestCases
     ]
 
 binSortTestCases
-  = [ ]
+  = [ [1, 3, 6, 2, 7, 8, 9, 10, 5, 4] ==> [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+      [3, 1, 1, 1, 2] ==> [1, 1, 1, 2, 3],
+      [5, 4, 3, 2, 1] ==> [1, 2, 3, 4, 5],
+      [] ==> []
+      ]
+
+toBinaryTestCases
+  = [ h2 ==> [1, 1, 0, 0]
+    ]
+
+binarySumTestCases
+  = [ ([0], [0]) ==> [0],
+      ([0], [1]) ==> [1],
+      ([1], [0]) ==> [1],
+      ([1], [1]) ==> [1, 0],
+      ([1], [1, 1, 1, 1, 1]) ==> [1, 0, 0, 0, 0, 0]
+    ]
 
 allTestCases
   = [ TestCase  "combineTrees"    (uncurry combineTrees)
@@ -43,7 +59,16 @@ allTestCases
                                   insertTestCases  
 
     , TestCase  "deleteMin"       (deleteMin)
-                                  deleteMinTestCases   
+                                  deleteMinTestCases  
+
+    , TestCase  "binSort"         (binSort)
+                                  binSortTestCases   
+
+    , TestCase  "toBinary"        (toBinary)
+                                  toBinaryTestCases   
+
+    , TestCase  "binarySum"       (uncurry binarySum)
+                                  binarySumTestCases                               
     ]
 
 runTests = mapM_ goTest allTestCases
