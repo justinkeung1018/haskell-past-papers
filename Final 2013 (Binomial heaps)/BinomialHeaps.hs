@@ -93,16 +93,16 @@ binarySum x y
       = sum : binarySum' xs ys cOut
       where
         (sum, cOut) = sumDigit x y cIn
+        sumDigit b1 b2 cIn
+          = (sum, cOut)
+          where
+            (cOut, sum) = quotRem (b1 + b2 + cIn) 2
     numDigits = max (length x) (length y)
     padAndReverse n
       = reverse (replicate (numDigits - length n + 1) 0 ++ n) -- Extra 0 for overflow
     x' = padAndReverse x
     y' = padAndReverse y
-    sumDigit b1 b2 cIn
-      = (sum, cOut)
-      where
-        (cOut, sum) = quotRem (b1 + b2 + cIn) 2
-
+    
 
 ------------------------------------------------------
 -- Some sample trees...
