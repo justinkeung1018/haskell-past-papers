@@ -5,7 +5,9 @@ import IC.TestSuite
 import BinomialHeaps
 
 combineTreesTestCases
-  = [ (t5, t6) ==> t7
+  = [ (t5, t6) ==> t7,
+      (Node 0 0 [], Node 0 0 []) ==> Node 0 1 [Node 0 0 []],
+      (Node 1 1 [Node 0 0 []], Node 1 1 [Node 1 0 []]) ==> Node 1 2 [Node 1 1 [Node 0 0 []], Node 1 0 []]
     ]
 
 extractMinTestCases
