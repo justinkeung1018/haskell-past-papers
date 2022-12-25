@@ -49,7 +49,7 @@ insert v
 
 deleteMin :: Ord a => BinHeap a -> BinHeap a
 deleteMin h
-  = mergeHeaps (children minTree) rest
+  = mergeHeaps (reverse (children minTree)) rest
   where
     minKey  = extractMin h
     minTree = head (filter (\t -> key t == minKey) h)
