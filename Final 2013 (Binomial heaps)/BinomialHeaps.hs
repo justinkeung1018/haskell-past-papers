@@ -84,6 +84,8 @@ toBinary h
     ranks = map rank h
 
 binarySum :: [Int] -> [Int] -> [Int]
+binarySum [0] [0]
+  = [0]
 binarySum x y
   = dropWhile (== 0) (init (map fst (scanr sumDigit (0, 0) (zip x' y'))))
   where
