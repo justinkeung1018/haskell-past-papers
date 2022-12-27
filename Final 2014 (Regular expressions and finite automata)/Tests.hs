@@ -67,6 +67,14 @@ groupTransitionsTestCases
       [(3,7,C 'a'),(5,9,C 'a')] ==> [(C 'a',[7,9])]
     ]
 
+makeDATestCases
+  = [ nda1 ==> da1,
+      nda2 ==> da2,
+      nda3 ==> da3,
+      nda4 ==> da4,
+      nda5 ==> da5
+    ]
+
 allTestCases
   = [ TestCase  "transitionsFrom"    (uncurry transitionsFrom)
                                      transitionsFromTestCases
@@ -85,6 +93,9 @@ allTestCases
 
     , TestCase  "groupTransitions"   (groupTransitions)
                                      groupTransitionsTestCases  
+                                    
+    , TestCase  "makeDA"             (makeDA)
+                                     makeDATestCases  
     ]
 
 runTests = mapM_ goTest allTestCases

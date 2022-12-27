@@ -162,35 +162,30 @@ groupTransitions :: [Transition] -> [(Label, [State])]
 groupTransitions tns
   = [(l, [t | (_, t, l') <- tns, l == l']) | l <- labels tns]
 
---
--- NOT WORKING
--- 
-
 makeDA :: Automaton -> Automaton
 -- Pre: Any cycle in the NDA must include at least one non-Eps transition
 makeDA nda
-  = (r', terminal, ts')
+  = (r', sort terminal', sort ts')
   where
-    (r, ms, ts) = makeDA' [1] [] []
-    states      = zip (sort ms) [1..]
+    (r, ms, ts) = makeDA' [startState nda] [] []
+    states      = zip (reverse ms) [1..]
     r'          = lookUp r states
-    terminal    = [lookUp f states | (f, t, l) <- ts, l == Eps]
-    ts'         = [(lookUp f states, lookUp t states, l) 
-                  | (f, t, l) <- ts, l /= Eps]
+    terminal    = filter (\m -> any (`elem` m) (terminalStates nda)) ms
+    terminal'   = map (`lookUp` states) terminal
+    ts'         = map (\(f, t, l) -> (lookUp f states, lookUp t states, l)) ts
 
     makeDA' :: [State] -> [MetaState] -> [MetaTransition]
       -> (MetaState, [MetaState], [MetaTransition])
     makeDA' r ms ts
-      | r `elem` ms = (m, ms, ts)
-      | otherwise   = (m, nub ms', nub (ts' ++ terminal))
+      | m `elem` ms = (m, ms, ts)
+      | otherwise   = (m, ms', ts')
       where 
         frontier   = concatMap (`getFrontier` nda) r
-        terminal   = [([f], [t], l) | (f, t, l) <- frontier, l == Eps]
         grouped    = groupTransitions frontier
-        m          = (nub . sort . map (\(f, _, _) -> f)) frontier
-        (ms', ts') = foldl makeDA'' (m : ms, ts) grouped
+        m          = (sort . nub . map (\(f, _, _) -> f)) frontier
+        (ms', ts') = foldr makeDA'' (m : ms, ts) grouped
         
-        makeDA'' (ms, ts) (l, r) 
+        makeDA'' (l, r) (ms, ts) 
           = (ms', (m, r', l) : ts')
           where
             (r', ms', ts') = makeDA' r ms ts
