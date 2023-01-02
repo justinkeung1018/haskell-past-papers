@@ -220,7 +220,7 @@ translate' (FunApp f es) nameMap ids
 
     translateArgs :: (Block, Exp, [Id]) -> Exp -> (Block, Exp, [Id])
     translateArgs (b, _, ids) exp
-      = (b ++ b', exp, ids')
+      = (b', exp, ids')
       where
         (b', e', ids') = translate' exp nameMap ids
 
