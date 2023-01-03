@@ -59,8 +59,8 @@ getAttribute _ _
 
 getChildren :: String -> XML -> [XML]
 getChildren name (Element _ _ cs)
-  = filter (\(Element name' _ _) -> name == name') cs
-  -- = [e | e@(Element name' _ _) <- cs, name == name']
+  -- = filter (\(Element name' _ _) -> name == name') cs
+  = [e | e@(Element name' _ _) <- cs, name == name']
 getChildren _ _
   = []
 
