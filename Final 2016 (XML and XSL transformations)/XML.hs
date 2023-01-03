@@ -131,16 +131,18 @@ parse s
 parse' :: String -> Stack -> XML
 parse' "" (Element _ _ (c : _) : _)
   = c
-parse' (c1 : c2 : cs) stk
-  | c1 == '<' && c2 == '/' = parse' restStr (popAndAdd stk)
+parse' ('<' : '/' : cs) stk
+  = parse' restStr (popAndAdd stk)
   where
     (_, '>' : restStr) = break (== '>') cs
-parse' s@(c : cs) stk
-  | c == '<'  = parse' afterTag (Element name as [] : stk)
-  | otherwise = parse' afterText (addText text stk)
+parse' ('<' : cs) stk
+  = parse' afterTag (Element name as [] : stk)
   where
     (name, afterName) = parseName cs
     (as, afterTag)    = parseAttributes afterName
+parse' s stk
+  = parse' afterText (addText text stk)
+  where
     (text, afterText) = break (== '<') s
 
 -------------------------------------------------------------------------
