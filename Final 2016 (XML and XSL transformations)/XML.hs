@@ -108,20 +108,18 @@ popAndAdd (pop1 : pop2 : rest)
 
 parseAttributes :: String -> (Attributes, String)
 -- Pre: The XML attributes string is well-formed
+parseAttributes ""
+  = ([], "")
 parseAttributes s
-  = parseAttributes' (skipSpace s)
+  | c == '>'  = ([], cs)
+  | otherwise = ((a, v) : as, rest)
   where
-    parseAttributes' ""
-      = ([], "")
-    parseAttributes' s@(c : cs)
-      | c == '>'  = ([], cs)
-      | otherwise = ((a, v) : as, rest)
-      where
-        (a, afterName)         = parseName s
-        ('=' : afterEquals)    = skipSpace afterName
-        ('\"' : afterOpen)     = skipSpace afterEquals
-        (v, '\"' : afterClose) = break (== '\"') (skipSpace afterOpen)
-        (as, rest)             = parseAttributes afterClose
+    trimmed@(c : cs)       = skipSpace s
+    (a, afterName)         = parseName trimmed
+    ('=' : afterEquals)    = skipSpace afterName
+    ('\"' : afterOpen)     = skipSpace afterEquals
+    (v, '\"' : afterClose) = break (== '\"') (skipSpace afterOpen)
+    (as, rest)             = parseAttributes afterClose
 
 parse :: String -> XML
 -- Pre: The XML string is well-formed
