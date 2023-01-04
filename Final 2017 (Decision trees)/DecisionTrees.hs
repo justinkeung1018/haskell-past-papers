@@ -161,11 +161,9 @@ gain d a cl
 
 bestGainAtt :: AttSelector
 bestGainAtt d@(h, _) cl
-  = fst (maximumBy compareGains (zip h' (map (\a -> gain d a cl) h')))
+  = snd (maximum (zip (map (\a -> gain d a cl) h') h'))
   where
     h' = delete cl h
-    compareGains x y
-      = compare (snd x) (snd y)
 
 --------------------------------------------------------------------
 
