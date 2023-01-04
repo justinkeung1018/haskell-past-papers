@@ -49,7 +49,7 @@ allSame (x : xs)
 
 remove :: Eq a => a -> [(a, b)] -> [(a, b)]
 remove x
-  = filter (\(x', _) -> x /= x')
+  = filter ((x /=) . fst)
 
 zipHeaderRow :: Header -> Row -> [(AttName, AttValue)]
 zipHeaderRow
