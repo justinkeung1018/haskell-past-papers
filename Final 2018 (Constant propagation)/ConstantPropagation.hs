@@ -181,7 +181,7 @@ unPhi ((If ePred bThen bElse) : (Assign v (Phi e1 e2)) : b)
   where
     bThen' = unPhi bThen ++ [Assign v e1]
     bElse' = unPhi bElse ++ [Assign v e2]
-unPhi ((DoWhile ((Assign v (Phi e1 e2)) : bDo) ePred) : b)
+unPhi (DoWhile ((Assign v (Phi e1 e2)) : bDo) ePred : b)
   = Assign v e1 : unPhi (DoWhile (unPhi bDo ++ [Assign v e2]) ePred : b)
 unPhi (If ePred bThen bElse : b)
   = If ePred (unPhi bThen) (unPhi bElse) : unPhi b
