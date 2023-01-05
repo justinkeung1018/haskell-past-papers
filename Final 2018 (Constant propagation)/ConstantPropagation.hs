@@ -40,7 +40,7 @@ type State = [(Id, Int)]
 
 update :: (Id, Int) -> State -> State
 update (x, v) st
-  = (x, v) : filter (\(x', _) -> x /= x') st
+  = (x, v) : filter ((/= x) . fst) st
 
 apply :: Op -> Int -> Int -> Int
 apply Add x y
