@@ -123,23 +123,24 @@ lift (Let bs e)
   | null scs              = Let rest e'
   | otherwise             = Let scs (Let rest e')
   where
-    bsLifted          = map (second (first lift . lift')) bs
+    bsStripped        = map (second lift') bs
+    bsLifted          = map (second (lift . fst)) bsStripped
+    nestedScs         = concatMap (snd . snd) bsStripped
     (e', inScs)       = (first lift . lift') e
-    bsScs             = concatMap (snd . snd) bsLifted
-    (topLvlScs, rest) = splitDefs (map (second fst) bsLifted)
-    scs               = inScs ++ topLvlScs ++ bsScs
+    (topLvlScs, rest) = splitDefs (map (second fst) bsStripped)
+    scs               = inScs ++ topLvlScs ++ nestedScs
 lift (Fun args body)
   = Fun args (lift body)
 lift (App f args)
   | null scs  = app'
   | otherwise = Let scs app'
   where
-    (f', fScs) = lift' f
-    argsLifted = map (first lift . lift') args
-    args'      = map fst argsLifted
-    argsScs    = concatMap snd argsLifted
-    scs        = fScs ++ argsScs
-    app'       = App (lift f') args'
+    (f', fScs)   = lift' f
+    argsStripped = map lift' args
+    argsLifted   = map (lift . fst) argsStripped
+    argsScs      = concatMap snd argsStripped
+    scs          = fScs ++ argsScs
+    app'         = App (lift f') argsLifted
 lift e 
   = e
 
