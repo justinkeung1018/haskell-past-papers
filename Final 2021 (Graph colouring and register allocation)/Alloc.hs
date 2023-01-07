@@ -2,7 +2,6 @@ module Alloc where
 
 import Data.Maybe
 import Data.List
-import Debug.Trace
 
 import Types
 import Examples
