@@ -16,7 +16,9 @@ count x
 
 degrees :: Eq a => Graph a -> [(a, Int)]
 degrees (ns, es)
-  = map (\n -> (n, count n (map fst es ++ map snd es))) ns
+  = map (\n -> (n, count n fs + count n ts)) ns
+  where
+    (fs, ts) = unzip es
 
 neighbours :: Eq a => a -> Graph a -> [a]
 neighbours n (_, es)
