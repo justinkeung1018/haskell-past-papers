@@ -2,6 +2,7 @@ module Alloc where
 
 import Data.Maybe
 import Data.List
+import Data.Tuple
 
 import Types
 import Examples
@@ -38,7 +39,7 @@ colourGraph _ ([], _)
 colourGraph maxC g@(ns, es)
   = (n, c) : cMap
   where
-    (_, n)  = minimum (map (\(n, d) -> (d, n)) (degrees g))
+    (_, n)  = minimum (map swap (degrees g))
     g'      = removeNode n g
     cMap    = colourGraph maxC g'
     c       = head (([1..maxC] \\ map (`lookUp` cMap) (neighbours n g)) ++ [0])
