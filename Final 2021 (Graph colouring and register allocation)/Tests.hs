@@ -64,6 +64,11 @@ liveVarsTestCases
       fig3CFG ==> fig3LiveVars
     ]
 
+buildCFGTestCases
+  = [ fact ==> factCFG,
+      fig3 ==> fig3CFG
+    ]
+
 allTestCases
   = [ TestCase  "count"              (uncurry count)
                                      countTestCases
@@ -97,6 +102,9 @@ allTestCases
 
     , TestCase  "liveVars"           (map sort . liveVars)
                                      liveVarsTestCases 
+
+    , TestCase  "buildCFG"           (sortCFG . buildCFG)
+                                     buildCFGTestCases 
     ]
 
 runTests = mapM_ goTest allTestCases
