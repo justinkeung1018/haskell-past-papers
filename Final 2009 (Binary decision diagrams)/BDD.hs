@@ -120,7 +120,7 @@ buildROBDD b is
 -- Fourth parameter represents the nodes that have already been built
 -- so we could check if the current node has already been built already
 buildROBDD' :: BExp -> NodeId -> [Index] -> [BDDNode] -> BDD
-buildROBDD' (Prim b) id [] _
+buildROBDD' (Prim b) _ [] _
   = if b then (1, []) else (0, [])
 buildROBDD' e id (i : is) built
   | sat fBDD == sat tBDD = fBDD
