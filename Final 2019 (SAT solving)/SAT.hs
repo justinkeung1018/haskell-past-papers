@@ -147,8 +147,7 @@ allSat f
         fImp    = map (, False) impVars ++ asgn
         tImp    = map (, True) impVars ++ asgn
     convert u
-      | isJust id = (fromJust id, True)
-      | otherwise = (lookUp (negate u) reverseIds, False)
+      | u > 0     = (lookUp u ids, True)
+      | otherwise = (lookUp (negate u) ids, False)
       where
-        reverseIds = map swap (idMap f)
-        id         = lookup u reverseIds 
+        ids = map swap (idMap f)
