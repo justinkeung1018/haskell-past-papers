@@ -67,8 +67,6 @@ toNNF (Not (And f1 f2))
   = Or (toNNF (Not f1)) (toNNF (Not f2))
 toNNF (Not (Not f))
   = toNNF f
-toNNF (Not f)
-  = Not (toNNF f)
 toNNF (And f1 f2)
   = And (toNNF f1) (toNNF f2)
 toNNF (Or f1 f2)
