@@ -107,7 +107,7 @@ flatten f
 -- 5 marks
 propUnits :: CNFRep -> (CNFRep, [Int])
 propUnits rep
-  | null us   = (rep, us)
+  | null us   = (rep, [])
   | otherwise = (rep', us ++ us')
   where
     us          = [cl | [cl] <- rep]
