@@ -122,12 +122,12 @@ dp :: CNFRep -> [[Int]]
 dp rep
   | null rep'     = [us]
   | any null rep' = []
-  | otherwise     = map (us ++) (tUnits' ++ fUnits')
+  | otherwise     = map (us ++) (tUnits ++ fUnits)
   where
     (rep', us)     = propUnits rep
     ((v : _) : _)  = rep'
-    tUnits'        = dp ([v] : rep')
-    fUnits'        = dp ([-v] : rep')
+    tUnits         = dp ([v] : rep')
+    fUnits         = dp ([-v] : rep')
         
 --------------------------------------------------------------------------
 -- Part IV
