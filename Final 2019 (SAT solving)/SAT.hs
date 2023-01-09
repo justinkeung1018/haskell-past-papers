@@ -126,10 +126,8 @@ dp rep
   where
     (rep', us)     = propUnits rep
     ((v : _) : _)  = rep'
-    (tRep, tUnits) = propUnits ([v] : rep')
-    (fRep, fUnits) = propUnits ([-v] : rep')
-    tUnits'        = map (tUnits ++) (dp tRep)
-    fUnits'        = map (fUnits ++) (dp fRep)
+    tUnits'        = dp ([v] : rep')
+    fUnits'        = dp ([-v] : rep')
         
 --------------------------------------------------------------------------
 -- Part IV
