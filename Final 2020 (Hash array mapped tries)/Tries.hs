@@ -32,17 +32,17 @@ getIndex n i size
 
 -- Pre: the index is less than the length of the list
 replace :: Int -> [a] -> a -> [a]
-replace 0 (x : xs) x'
-  = x' : xs
-replace i (x : xs) x'
-  = x : replace (i - 1) xs x'
+replace i xs x
+  = before ++ x : after
+  where
+    (before, _ : after) = splitAt i xs
 
 -- Pre: the index is less than or equal to the length of the list
 insertAt :: Int -> a -> [a] -> [a]
-insertAt 0 x' xs
-  = x' : xs
-insertAt i x' (x : xs)
-  = x : insertAt (i - 1) x' xs
+insertAt i x xs
+  = before ++ x : after
+  where
+    (before, after) = splitAt i xs
 
 --------------------------------------------------------------------
 -- Part II
