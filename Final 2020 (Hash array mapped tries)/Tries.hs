@@ -51,12 +51,12 @@ sumTrie :: (Int -> Int) -> ([Int] -> Int) -> Trie -> Int
 sumTrie _ g (Leaf ns)
   = g ns
 sumTrie f g (Node _ subs)
-  = sum (map sumSubNodes subs)
+  = sum (map sumSubNode subs)
   where
-    sumSubNodes :: SubNode -> Int
-    sumSubNodes (Term n)
+    sumSubNode :: SubNode -> Int
+    sumSubNode (Term n)
       = f n
-    sumSubNodes (SubTrie t)
+    sumSubNode (SubTrie t)
       = sumTrie f g t
 
 {-
