@@ -108,12 +108,12 @@ flatten f
 propUnits :: CNFRep -> (CNFRep, [Int])
 propUnits rep
   | null us   = (rep, [])
-  | otherwise = (rep', us ++ us')
+  | otherwise = (rep'', u : us')
   where
-    us          = [cl | [cl] <- rep]
-    (rep', us') = propUnits (foldr propUnit rep us)
-    propUnit u
-      = map (filter (/= negate u)) . filter (notElem u)
+    us           = [cl | [cl] <- rep]
+    (u : _)      = us
+    rep'         = [filter (/= negate u) cl | cl <- rep, u `notElem` cl]
+    (rep'', us') = propUnits rep'
 
 -- 4 marks
 dp :: CNFRep -> [[Int]]
