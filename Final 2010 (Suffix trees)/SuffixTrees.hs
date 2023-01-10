@@ -15,10 +15,8 @@ removePrefix s
   = drop (length s)
 
 suffixes :: [a] -> [[a]]
-suffixes []
-  = []
 suffixes xs
-  = xs : suffixes (tail xs)
+  = take (length xs) (iterate tail xs)
 
 isSubstring :: String -> String -> Bool
 isSubstring s s'
